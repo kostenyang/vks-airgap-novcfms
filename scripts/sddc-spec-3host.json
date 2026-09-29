@@ -1,0 +1,272 @@
+{
+ "version": "9.1.1.0",
+ "vcfInstanceName": "vcf-m01",
+ "sddcId": "m01",
+ "ceipEnabled": false,
+ "workflowType": "VCF",
+ "skipEsxThumbprintValidation": true,
+ "skipGatewayPingValidation": true,
+ "dnsSpec": {
+  "subdomain": "alan.lab",
+  "nameservers": [
+   "192.168.120.5"
+  ]
+ },
+ "ntpServers": [
+  "192.168.110.1"
+ ],
+ "sddcManagerSpec": {
+  "hostname": "sddc.alan.lab",
+  "useExistingDeployment": false,
+  "rootPassword": "<LAB_PASSWORD>",
+  "sshPassword": "<LAB_PASSWORD>",
+  "localUserPassword": "<LAB_PASSWORD>"
+ },
+ "vcenterSpec": {
+  "vcenterHostname": "vcsa.alan.lab",
+  "vmSize": "small",
+  "storageSize": "lstorage",
+  "ssoDomain": "vsphere.local",
+  "useExistingDeployment": false,
+  "rootVcenterPassword": "<LAB_PASSWORD>",
+  "adminUserSsoUsername": "administrator@vsphere.local",
+  "adminUserSsoPassword": "<LAB_PASSWORD>"
+ },
+ "nsxtSpec": {
+  "vipFqdn": "nsx-vip.alan.lab",
+  "nsxtManagers": [
+   {
+    "hostname": "nsx01.alan.lab"
+   }
+  ],
+  "nsxtManagerSize": "medium",
+  "useExistingDeployment": false,
+  "rootNsxtManagerPassword": "<LAB_PASSWORD>",
+  "nsxtAdminPassword": "<LAB_PASSWORD>",
+  "nsxtAuditPassword": "<LAB_PASSWORD>",
+  "transportVlanId": "150",
+  "ipAddressPoolSpec": {
+   "name": "m01-cl01-tep01",
+   "description": "tep pool",
+   "subnets": [
+    {
+     "cidr": "192.168.150.0/24",
+     "gateway": "192.168.150.1",
+     "ipAddressPoolRanges": [
+      {
+       "start": "192.168.150.50",
+       "end": "192.168.150.70"
+      }
+     ]
+    }
+   ]
+  },
+  "vpcSpec": {
+   "dtgwSpec": {
+    "vlan": "0",
+    "gatewayCidr": "192.168.120.1/24",
+    "externalIpBlockCidr": "192.168.120.0/24",
+    "privateTgwIpBlockCidr": "172.31.0.0/16"
+   }
+  }
+ },
+ "datastoreSpec": {
+  "vsanSpec": {
+   "datastoreName": "vcf-m01-cl01-ds-vsan01",
+   "vsanDedup": false,
+   "failuresToTolerate": 0,
+   "esaConfig": {
+    "enabled": false
+   },
+   "encryptionConfig": {
+    "dataInTransitConfig": {
+     "enable": false
+    }
+   }
+  }
+ },
+ "dvsSpecs": [
+  {
+   "dvsName": "vcf-m01-cl01-vds01",
+   "mtu": 9000,
+   "networks": [
+    "MANAGEMENT",
+    "VMOTION",
+    "VSAN"
+   ],
+   "vmnicsToUplinks": [
+    {
+     "id": "vmnic0",
+     "uplink": "uplink1"
+    },
+    {
+     "id": "vmnic1",
+     "uplink": "uplink2"
+    }
+   ],
+   "nsxTeamings": [
+    {
+     "policy": "LOADBALANCE_SRCID",
+     "activeUplinks": [
+      "uplink1",
+      "uplink2"
+     ],
+     "standByUplinks": []
+    }
+   ],
+   "nsxtSwitchConfig": {
+    "transportZones": [
+     {
+      "name": "overlay-tz-mgmt-nsxt",
+      "transportType": "OVERLAY"
+     }
+    ]
+   },
+   "lagSpecs": null
+  }
+ ],
+ "networkSpecs": [
+  {
+   "networkType": "MANAGEMENT",
+   "ipAddressVersion": "IPv4",
+   "subnet": "192.168.120.0/24",
+   "gateway": "192.168.120.1",
+   "vlanId": "0",
+   "portGroupKey": "vcf-m01-cl01-vds01-pg-management",
+   "teamingPolicy": "loadbalance_loadbased",
+   "activeUplinks": [
+    "uplink1",
+    "uplink2"
+   ],
+   "standbyUplinks": []
+  },
+  {
+   "networkType": "VMOTION",
+   "ipAddressVersion": "IPv4",
+   "subnet": "192.168.130.0/24",
+   "gateway": "192.168.130.1",
+   "vlanId": "130",
+   "mtu": 9000,
+   "includeIpAddressRanges": [
+    {
+     "startIpAddress": "192.168.130.5",
+     "endIpAddress": "192.168.130.20"
+    }
+   ],
+   "portGroupKey": "vcf-m01-cl01-vds01-pg-vmotion",
+   "teamingPolicy": "loadbalance_loadbased",
+   "activeUplinks": [
+    "uplink1",
+    "uplink2"
+   ],
+   "standbyUplinks": []
+  },
+  {
+   "networkType": "VSAN",
+   "ipAddressVersion": "IPv4",
+   "subnet": "192.168.140.0/24",
+   "gateway": "192.168.140.1",
+   "vlanId": "140",
+   "mtu": 9000,
+   "includeIpAddressRanges": [
+    {
+     "startIpAddress": "192.168.140.5",
+     "endIpAddress": "192.168.140.20"
+    }
+   ],
+   "portGroupKey": "vcf-m01-cl01-vds01-pg-vsan",
+   "teamingPolicy": "loadbalance_loadbased",
+   "activeUplinks": [
+    "uplink1",
+    "uplink2"
+   ],
+   "standbyUplinks": []
+  }
+ ],
+ "clusterSpec": {
+  "datacenterName": "vcf-m01-dc01",
+  "clusterName": "vcf-m01-cl01"
+ },
+ "vspClusterSpec": {
+  "name": "vcf-m01-vmsp-01",
+  "instanceFqdn": "vcfms-instance.alan.lab",
+  "platformFqdn": "vsp01.alan.lab",
+  "fleetFqdn": "vcfms-fleet.alan.lab",
+  "systemUserPassword": "<LAB_PASSWORD>",
+  "size": "small",
+  "internalClusterCidrIpv4": "198.18.0.0/15",
+  "ipv4Pool": {
+   "ipRange": {
+    "startIpAddress": "192.168.120.31",
+    "endIpAddress": "192.168.120.45"
+   }
+  }
+ },
+ "vcfOperationsSpec": {
+  "applianceSize": "small",
+  "useExistingDeployment": false,
+  "adminUserPassword": "<LAB_PASSWORD>",
+  "nodes": [
+   {
+    "hostname": "vcfops.alan.lab",
+    "type": "master",
+    "rootUserPassword": "<LAB_PASSWORD>"
+   }
+  ]
+ },
+ "vcfOperationsCollectorSpec": {
+  "hostname": "proxy.alan.lab",
+  "applianceSize": "small",
+  "useExistingDeployment": false,
+  "rootUserPassword": "<LAB_PASSWORD>"
+ },
+ "licenseServerSpec": {
+  "hostname": "license.alan.lab"
+ },
+ "vidbSpec": {
+  "hostname": "identity-broker.alan.lab"
+ },
+ "saltSpec": {},
+ "saltRaasSpec": {},
+ "telemetryAcceptorSpec": {},
+ "fleetLcmSpec": {
+  "hostname": "vcfms-fleet.alan.lab"
+ },
+ "sddcLcmSpec": {
+  "hostname": "vcfms-runtime.alan.lab"
+ },
+ "fleetDepotSpec": {},
+ "hostSpecs": [
+  {
+   "hostname": "esx01.alan.lab",
+   "credentials": {
+    "username": "root",
+    "password": "<LAB_PASSWORD>"
+   },
+   "sslThumbprint": "6F:11:EF:D0:DE:96:62:CF:D2:14:BF:50:81:C8:1B:AF:94:67:B7:CA:A8:37:2B:F3:6B:5B:D3:1E:A4:05:77:A0"
+  },
+  {
+   "hostname": "esx02.alan.lab",
+   "credentials": {
+    "username": "root",
+    "password": "<LAB_PASSWORD>"
+   },
+   "sslThumbprint": "5B:3A:0F:8E:30:B1:E7:1F:43:90:47:D8:0E:F7:A2:51:91:E1:66:1B:60:90:7A:49:88:E3:22:42:F9:A2:C4:67"
+  },
+  {
+   "hostname": "esx03.alan.lab",
+   "credentials": {
+    "username": "root",
+    "password": "<LAB_PASSWORD>"
+   },
+   "sslThumbprint": "74:C3:D6:14:02:50:27:D0:02:DE:67:7C:A9:DA:93:D5:0C:EA:1A:67:7B:47:3A:86:B8:5B:AE:17:CF:50:5E:DC"
+  }
+ ],
+ "skipChecks": [
+  "NESTED_CPU_CHECK",
+  "NIC_COUNT_CHECK",
+  "MIN_HOST_CHECK",
+  "VSAN_ESA_HCL_CHECK",
+  "ESX_THUMBPRINT_CHECK"
+ ]
+}

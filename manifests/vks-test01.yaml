@@ -1,0 +1,68 @@
+# VKS test cluster for the air-gap round (ClusterClass builtin-generic-v3.7.0, CAPI v1beta2)
+# pods/services CIDRs chosen to avoid the lab's 192.168.x networks (default pod CIDR 192.168.0.0/16 would overlap).
+apiVersion: cluster.x-k8s.io/v1beta2
+kind: Cluster
+metadata:
+  name: vks-test01
+  namespace: vks-ns01
+spec:
+  clusterNetwork:
+    pods:
+      cidrBlocks: ["10.244.0.0/16"]
+    services:
+      cidrBlocks: ["10.97.0.0/16"]
+    serviceDomain: cluster.local
+  topology:
+    classRef:
+      name: builtin-generic-v3.7.0
+      namespace: vmware-system-vks-public
+    version: v1.34.9+vmware.2-vkr.4
+    controlPlane:
+      replicas: 1
+    workers:
+      machineDeployments:
+      - class: node-pool
+        name: np1
+        replicas: 1
+    variables:
+    - name: vmClass
+      value: best-effort-medium
+    - name: storageClass
+      value: vcf-m01-cl01-vsan-storage-policy
+    - name: osConfiguration
+      value:
+        trust:
+          additionalTrustedCAs:
+          - caCert:
+              content: |
+                -----BEGIN CERTIFICATE-----
+                MIIFZTCCA02gAwIBAgIUCUGZ9LRAz/MSZeDKJHpFHuIGzr0wDQYJKoZIhvcNAQEN
+                BQAwQjELMAkGA1UEBhMCVFcxETAPBgNVBAoMCGFsYW4ubGFiMSAwHgYDVQQDDBdh
+                bGFuLmxhYiBIYXJib3IgUm9vdCBDQTAeFw0yNjA5MjQwODA1NTZaFw0zNjA5MjEw
+                ODA1NTZaMEIxCzAJBgNVBAYTAlRXMREwDwYDVQQKDAhhbGFuLmxhYjEgMB4GA1UE
+                AwwXYWxhbi5sYWIgSGFyYm9yIFJvb3QgQ0EwggIiMA0GCSqGSIb3DQEBAQUAA4IC
+                DwAwggIKAoICAQCwmf1XXjRw2CK2bUA/FeVeOei+xBfW7tX5DslTMmk0YA3qz7Au
+                MVuHnLutgqfWHgdxQv7qtvNb/BjHU8R5UcGDA03xDC//kutUAhAq9UIrNGO96VTb
+                NhSCiIKXSGhycR9pL7MpxFig6+EAwggZLCJWELIcTADr/SwGDujupWhxk5GQT1G2
+                RQVdBPLctomm4OAQp++Kqmf5LIX/o66F9mjCTi2uBWHquD34Xf02B+9q5cvV6eQe
+                mD+iCHvTpz3HaBREifgD2/z4HqFTX34irJJhyXvxssbfgsYODL5AlBgY89qERPR2
+                2crFSd3L0WMUsNOwd+AepIpZ8AYRlQdh3sK8kqyV2+ZEDVm0DQhQyf28A8kSORbw
+                1OZUFqxaC+Kfw8kgPpFSJP1LLpqBdUK809orQ0fWKwrLXpeyoZ/+94HlMX2kiqIJ
+                T5TyRHc4wH19liDAiCAnVrJjPERTGOtR6nVAAl7kN+dud+QGWmBuFXZvpMu+3amD
+                QuRJPj5BiWNvbZnveQvIa5YpJuAIoDSxFtKcjR3nTKVfZ8YhDjF4WL6SOWW/lAxM
+                JUkGSB5JgFWdwKwfo40roEYeP52MVszTzrPEo9f2Xd+Y9NOsRBoXAgqxQxgadyZY
+                hqFhJZbQropIj2yXH0TuDVy5b+oK5gvOydq+KH3Mz87oj8JuPkpYH9gBFwIDAQAB
+                o1MwUTAdBgNVHQ4EFgQUAPGRt+xphV4IKBeznhO0wrauqb8wHwYDVR0jBBgwFoAU
+                APGRt+xphV4IKBeznhO0wrauqb8wDwYDVR0TAQH/BAUwAwEB/zANBgkqhkiG9w0B
+                AQ0FAAOCAgEAixVZ5IQFuFWlgnrAm4ZjXNunFDNQVDt/hkFGbkSlZ4rjbUVVkUgd
+                M2APxWoMO9TuSt2orO1sF0VXIsM6k8E47d0xFL1dXR0aypRm5fzXK/iREdpuaM2l
+                EPxla3oP4tsSnudzXBUvYH9j7o+WhkOVlI+8RtiKUd6MVYIgd7Q+Rev2tXfIcZoT
+                2C1PAoU00ia1i3GG6eGzk60P87Dt+RXgdTKrv7k4xOWD6IxhyoYelqynVnpBaNft
+                AGP2XoTw0uvHwtNLFfbp4/a53oVoItKVKghvtk1PHdXwTFGC2z1aD7pauanQYk8j
+                M8O8qkByFLNc8OESplOHm+9hclC4BU40FxD5got9jyCTWKF7lY0rrhdt2lw+at3z
+                tZHKIVL4FGoBSd2Ik3G/BtGlmyJJWJwJKeoC8BhddXlSY+6fB8FVNZrymb19JqSR
+                UbGqa7idqot0tTLaU+oMTFRBFKcfdFK6jRsB5LQIGCiDAholCjrAkIQGQJVS16YZ
+                zNQk+pms8FwZo52DoOtF8n9cxBa5XA3ZqfeblT44Zd3cltXrLXEL/vPG8QWBb5/8
+                AY/dnROEiuyxGZp4lKvfTzaePhcCgXY2fyIKyD0fIID3Li4p08PDwn6o70jafi2w
+                EW5xD4MsXCuYw1HZK9QhZEagas8j3ICkChXmZSanMknZK4oYwi09FDI=
+                -----END CERTIFICATE-----

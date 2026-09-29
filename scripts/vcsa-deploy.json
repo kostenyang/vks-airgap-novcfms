@@ -1,0 +1,39 @@
+{
+    "__version": "2.13.0",
+    "__comments": "vcsa.alan.lab 120.3 for the air-gap VKS round - deployed on OUTER Xindian (decision 5)",
+    "new_vcsa": {
+        "vc": {
+            "hostname": "192.168.110.32",
+            "username": "administrator@vsphere.local",
+            "password": "<OUTER_VC_PASSWORD>",
+            "deployment_network": "VCF91-Nested-Trunk",
+            "datacenter": ["Xindian Datacenter"],
+            "datastore": "Datastore2",
+            "target": ["XinDian Cluster"]
+        },
+        "appliance": {
+            "thin_disk_mode": true,
+            "deployment_option": "small",
+            "name": "vcsa"
+        },
+        "network": {
+            "ip_family": "ipv4",
+            "mode": "static",
+            "system_name": "vcsa.alan.lab",
+            "ip": "192.168.120.3",
+            "prefix": "24",
+            "gateway": "192.168.120.1",
+            "dns_servers": ["192.168.120.5"]
+        },
+        "os": {
+            "password": "<LAB_PASSWORD>",
+            "ntp_servers": "192.168.110.1",
+            "ssh_enable": true
+        },
+        "sso": {
+            "password": "<LAB_PASSWORD>",
+            "domain_name": "vsphere.local"
+        }
+    },
+    "ceip": { "settings": { "ceip_enabled": false } }
+}
