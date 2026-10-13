@@ -21,6 +21,7 @@ Supervisor 採 **VDS + Foundation Load Balancer**，registry 用**外部 Harbor�
 | 非 VPC（VDS + Foundation LB） | [ui-step-by-step/vds-flb](ui-step-by-step/vds-flb/README.md) | [ui-step-by-step/vds-flb-airgap](ui-step-by-step/vds-flb-airgap/README.md) |
 | **VPC air-gap + 不部署 VCFMS（m06）** | — | [ui-step-by-step/vpc-airgap-novcfms](ui-step-by-step/vpc-airgap-novcfms/README.md) |
 | **VPC + 外掛 NAS 做 PV，走獨立 VLAN（m06）** | — | [ui-step-by-step/vpc-nas-pv](ui-step-by-step/vpc-nas-pv/README.md)（做法 1 ESXi NFS datastore／做法 2 VKS eth1 + NFS CSI RWX） |
+| **🆕 VCF + air-gap + VPC（VNA）+ NFS 獨立 VLAN，拆掉重做全程截圖（m06）** | — | [vcf-vpc-airgap-nfs](vcf-vpc-airgap-nfs/README.md)（NFS 流量不經過 VNA，附 1 GiB 寫入 vs LB 對照組實測） |
 
 每份都附 docx。air-gap 版用 Supervisor 的 **Container Registries**（UI）信任 Harbor CA、用 Local Content Library 匯入 VKr；沒有涵蓋 addon 套件庫改指。m05 有部署 VCFMS；**m06 從 VCF Installer UI 精靈 bring-up、在 VSP 開始時中止（不部署 VCFMS）**，證明 VPC Supervisor + VKS 不依賴 VCFMS。和本文件的差異見 [ui-step-by-step/README.md](ui-step-by-step/README.md)。
 
@@ -47,6 +48,7 @@ scripts/              實作用腳本（bring-up 中止、Supervisor、Harbor、
 manifests/            vks-test01 Cluster（CAPI v1beta2、ClusterClass builtin-generic-v3.7.0）
 certs/harbor-ca.crt   lab Harbor 根憑證（公開憑證）
 ui-step-by-step/      UI 逐步截圖文件（m05：vpc / vpc-airgap / vds-flb / vds-flb-airgap；m06：vpc-airgap-novcfms、vpc-nas-pv；各含 docx）
+vcf-vpc-airgap-nfs/   VCF + air-gap + VPC（VNA）+ NFS 獨立 VLAN（m06 重做，UI 截圖 + docx + 流量路徑驗證）
 ```
 
 ## 使用腳本
