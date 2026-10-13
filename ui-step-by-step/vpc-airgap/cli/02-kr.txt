@@ -1,0 +1,7 @@
+$ kubectl get kr
+NAME                       VERSION                  READY   COMPATIBLE   DEACTIVATED BY   CREATED
+v1.36.2---vmware.2-vkr.3   v1.36.2+vmware.2-vkr.3   True    True                          9s
+
+$ kubectl get osimage
+NAME                    K8S VERSION        OS NAME   OS VERSION   ARCH    TYPE   COMPATIBLE   CREATED
+vmi-42b11faf7d5357cef   v1.36.2+vmware.2   photon    5            amd64   cvmi                9s

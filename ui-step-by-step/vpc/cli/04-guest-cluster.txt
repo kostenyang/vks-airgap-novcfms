@@ -1,0 +1,46 @@
+$ kubectl vsphere login --server=192.168.15.5 -u administrator@vsphere.local --insecure-skip-tls-verify --tanzu-kubernetes-cluster-namespace vks-lab --tanzu-kubernetes-cluster-name vks-cl01
+
+
+Logged in successfully.
+
+You have access to the following contexts:
+   192.168.15.5
+   svc-cci-ns-awpqg
+   svc-tkg-hli3a
+   svc-velero-mmr5g
+   vks-cl01
+   vks-lab
+
+If the context you wish to use is not in this list, you may need to try
+logging in again later, or contact your cluster administrator.
+
+To change context, use `kubectl config use-context <workload name>`
+Switched to context "vks-cl01".
+
+$ kubectl get nodes -o wide
+NAME                                       STATUS   ROLES           AGE     VERSION            INTERNAL-IP     EXTERNAL-IP   OS-IMAGE                 KERNEL-VERSION          CONTAINER-RUNTIME
+vks-cl01-pzgwg-7s79m                       Ready    control-plane   10m     v1.36.2+vmware.2   192.168.15.50   <none>        VMware Photon OS/Linux   6.1.176-4.ph5 (amd64)   containerd://2.3.2+vmware.3-fips
+vks-cl01-vks-cl01-np-1-wk4lj-q2dr6-xv2sg   Ready    <none>          4m53s   v1.36.2+vmware.2   192.168.15.51   <none>        VMware Photon OS/Linux   6.1.176-4.ph5 (amd64)   containerd://2.3.2+vmware.3-fips
+
+$ kubectl get pods -A
+NAMESPACE                      NAME                                            READY   STATUS    RESTARTS        AGE
+kube-system                    antrea-agent-4wdl6                              2/2     Running   0               3m8s
+kube-system                    antrea-agent-x5tgt                              2/2     Running   0               3m8s
+kube-system                    antrea-controller-69d5bc7748-nmxph              1/1     Running   0               3m8s
+kube-system                    coredns-688f84b7cd-7mrgh                        1/1     Running   0               2m1s
+kube-system                    coredns-688f84b7cd-h5qlp                        1/1     Running   0               9m6s
+kube-system                    etcd-vks-cl01-pzgwg-7s79m                       1/1     Running   0               10m
+kube-system                    kube-apiserver-vks-cl01-pzgwg-7s79m             1/1     Running   0               10m
+kube-system                    kube-controller-manager-vks-cl01-pzgwg-7s79m    1/1     Running   1 (5m34s ago)   10m
+kube-system                    kube-proxy-2w9p6                                1/1     Running   0               10m
+kube-system                    kube-proxy-dr57p                                1/1     Running   0               4m53s
+kube-system                    kube-scheduler-vks-cl01-pzgwg-7s79m             1/1     Running   1 (5m34s ago)   10m
+kube-system                    metrics-server-95694bfb5-mzgw9                  1/1     Running   0               4m49s
+kube-system                    snapshot-controller-5cd75488cc-56wbj            1/1     Running   0               4m48s
+secretgen-controller           secretgen-controller-6dd95cdf54-4nmvw           1/1     Running   0               4m39s
+tkg-system                     kapp-controller-7575474665-hjz4z                2/2     Running   0               7m2s
+vmware-system-auth             guest-cluster-auth-svc-jxxp4                    1/1     Running   0               2m13s
+vmware-system-cloud-provider   guest-cluster-cloud-provider-559cd69987-kxfrr   1/1     Running   0               4m52s
+vmware-system-csi              vsphere-csi-controller-66ddbddf5b-2lsq7         7/7     Running   0               4m48s
+vmware-system-csi              vsphere-csi-node-dxlh7                          3/3     Running   5 (2m37s ago)   4m48s
+vmware-system-csi              vsphere-csi-node-nl4m8                          3/3     Running   5 (2m28s ago)   4m48s

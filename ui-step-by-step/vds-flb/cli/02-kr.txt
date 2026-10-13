@@ -1,0 +1,4 @@
+$ kubectl get kr
+NAME                       VERSION                  READY   COMPATIBLE   DEACTIVATED BY   CREATED
+v1.35.6---vmware.2-vkr.3   v1.35.6+vmware.2-vkr.3   True    True                          8s
+v1.36.2---vmware.2-vkr.3   v1.36.2+vmware.2-vkr.3   True    True                          6s

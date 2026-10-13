@@ -1,0 +1,6 @@
+NAME                                CLUSTERCLASS             AVAILABLE   CP DESIRED   CP CURRENT   CP READY   CP AVAILABLE   CP UP-TO-DATE   W DESIRED   W CURRENT   W READY   W AVAILABLE   W UP-TO-DATE   PAUSED   PHASE         AGE   VERSION
+cluster.cluster.x-k8s.io/vks-cl01   builtin-generic-v3.7.0   True        1            1            1          1              1               1           1           1         1             1              False    Provisioned   17m   v1.36.2+vmware.2
+
+NAME                                                                            POWER-STATE   CLASS                IMAGE                   PRIMARY-IP4     AGE
+virtualmachine.vmoperator.vmware.com/vks-cl01-pzgwg-7s79m                       PoweredOn     best-effort-medium   vmi-e7cab606a857f2f61   192.168.15.50   17m
+virtualmachine.vmoperator.vmware.com/vks-cl01-vks-cl01-np-1-wk4lj-q2dr6-xv2sg   PoweredOn     best-effort-small    vmi-e7cab606a857f2f61   192.168.15.51   8m44s

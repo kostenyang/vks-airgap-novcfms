@@ -1,0 +1,14 @@
+# 和 README 步驟 5(LCI → Network → SubnetSets → NEW SUBNETSET)等效的 YAML,給想用 kubectl 的人參考
+# VLAN-backed VPC 的 Namespace 要有 Public SubnetSet,VKS 節點才拿得到 IP
+# (VKS 3.7.0 預設用 Private subnet,VLAN-backed / TEP-less 模式沒有 SNAT → 會被擋)
+# 來源:github.com/notchcc/vcf-lab vks/manifests/subnetset-public.yaml(namespace 改 vks-lab)
+apiVersion: crd.nsx.vmware.com/v1alpha1
+kind: SubnetSet
+metadata:
+  name: public
+  namespace: vks-lab
+spec:
+  accessMode: Public          # VLAN-backed 只能 Public
+  ipv4SubnetSize: 16          # 建立後不能改
+  subnetDHCPConfig:
+    mode: DHCPDeactivated     # 靜態分配

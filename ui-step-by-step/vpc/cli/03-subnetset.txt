@@ -1,0 +1,7 @@
+$ kubectl get subnetset -n vks-lab
+NAME     ACCESSMODE   IPV4SUBNETSIZE   NETWORKADDRESSES
+public   Public       16               
+
+$ kubectl get subnetset public -n vks-lab -o yaml (spec/status)
+{"accessMode":"Public","ipv4SubnetSize":16,"subnetDHCPConfig":{"mode":"DHCPDeactivated"}}
+{"conditions":[{"lastTransitionTime":"2026-10-11T12:09:57Z","message":"SubnetSet CR has been successfully created/updated","reason":"SubnetSetReady","status":"True","type":"Ready"}]}

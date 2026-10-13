@@ -1,0 +1,27 @@
+$ kubectl get nodes -o wide
+NAME                                       STATUS   ROLES           AGE    VERSION            INTERNAL-IP     EXTERNAL-IP   OS-IMAGE                 KERNEL-VERSION          CONTAINER-RUNTIME
+vks-cl01-6gp4k-7hz7h                       Ready    control-plane   7m9s   v1.36.2+vmware.2   192.168.15.37   <none>        VMware Photon OS/Linux   6.1.176-4.ph5 (amd64)   containerd://2.3.2+vmware.3-fips
+vks-cl01-vks-cl01-np-1-mngnt-d6xcr-5wx6z   Ready    <none>          4m7s   v1.36.2+vmware.2   192.168.15.38   <none>        VMware Photon OS/Linux   6.1.176-4.ph5 (amd64)   containerd://2.3.2+vmware.3-fips
+
+$ kubectl get pods -A
+NAMESPACE                      NAME                                            READY   STATUS             RESTARTS      AGE
+kube-system                    antrea-agent-htz65                              2/2     Running            0             70s
+kube-system                    antrea-agent-lvcmp                              2/2     Running            0             70s
+kube-system                    antrea-controller-5475d4dbd8-fdzvg              1/1     Running            0             70s
+kube-system                    coredns-688f84b7cd-8fq2z                        1/1     Running            0             36s
+kube-system                    coredns-688f84b7cd-zzttb                        1/1     Running            0             6m57s
+kube-system                    etcd-vks-cl01-6gp4k-7hz7h                       1/1     Running            0             7m5s
+kube-system                    kube-apiserver-vks-cl01-6gp4k-7hz7h             1/1     Running            0             7m5s
+kube-system                    kube-controller-manager-vks-cl01-6gp4k-7hz7h    1/1     Running            0             7m7s
+kube-system                    kube-proxy-z7qcw                                1/1     Running            0             6m58s
+kube-system                    kube-proxy-zn7bd                                1/1     Running            0             4m7s
+kube-system                    kube-scheduler-vks-cl01-6gp4k-7hz7h             1/1     Running            0             7m6s
+kube-system                    metrics-server-56bdb59d78-5wjl6                 1/1     Running            0             2m13s
+kube-system                    snapshot-controller-7cd468c5d-p52f6             1/1     Running            0             2m12s
+secretgen-controller           secretgen-controller-5b95d4d9f4-ndk6d           1/1     Running            0             2m6s
+tkg-system                     kapp-controller-d48bbc44d-dfxqc                 2/2     Running            0             2m55s
+vmware-system-auth             guest-cluster-auth-svc-rb2tq                    1/1     Running            0             26s
+vmware-system-cloud-provider   guest-cluster-cloud-provider-779bb84cc5-kt5qb   1/1     Running            0             2m16s
+vmware-system-csi              vsphere-csi-controller-6b8447988f-7spqx         7/7     Running            0             2m12s
+vmware-system-csi              vsphere-csi-node-dvccj                          3/3     Running            4 (67s ago)   2m12s
+vmware-system-csi              vsphere-csi-node-gm467                          2/3     CrashLoopBackOff   4 (23s ago)   2m12s

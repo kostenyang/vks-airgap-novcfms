@@ -1,0 +1,15 @@
+$ kubectl apply -f pull-test.yaml
+
+$ kubectl -n demo get pod from-dockerhub from-harbor
+NAME             READY   STATUS             RESTARTS   AGE
+from-dockerhub   0/1     ImagePullBackOff   0          60s
+from-harbor      0/1     Completed          0          60s
+
+$ kubectl -n demo logs from-harbor
+hello-from-harbor
+<title>Welcome to nginx!</title>
+
+$ kubectl -n demo get events (from-dockerhub)
+Failed      Failed to pull image "docker.io/library/busybox:1.37.0": rpc error: code = DeadlineExceeded desc = failed to pull and unpack image "docker.io/library/busybox:1.37.0": failed to resolve image: failed to do request: Head "https://registry-1.docker.io/v2/library/busybox/manifests/1.37.0": d
+Failed      Error: ErrImagePull
+BackOff     Back-off pulling image "docker.io/library/busybox:1.37.0"

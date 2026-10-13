@@ -1,0 +1,27 @@
+$ kubectl get sc nas-nfs-rwx
+NAME          PROVISIONER      RECLAIMPOLICY   VOLUMEBINDINGMODE   ALLOWVOLUMEEXPANSION   AGE
+nas-nfs-rwx   nfs.csi.k8s.io   Delete          Immediate           true                   41s
+
+$ kubectl -n rwx-demo get pvc
+NAME          STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   VOLUMEATTRIBUTESCLASS   AGE
+shared-data   Bound    pvc-104bfa32-9d48-4a98-84a4-f67ae6894f45   5Gi        RWX            nas-nfs-rwx    <unset>                 42s
+
+$ kubectl get pv -o custom-columns=NAME:.metadata.name,MODES:.spec.accessModes,SC:.spec.storageClassName,SERVER:.spec.csi.volumeAttributes.server,SHARE:.spec.csi.volumeAttributes.share,SUBDIR:.spec.csi.volumeAttributes.subdir | grep -E "NAME|nas-nfs"
+NAME                                       MODES             SC            SERVER          SHARE             SUBDIR
+pvc-104bfa32-9d48-4a98-84a4-f67ae6894f45   [ReadWriteMany]   nas-nfs-rwx   192.168.17.20   /export/vks-rwx   pvc-104bfa32-9d48-4a98-84a4-f67ae6894f45
+
+$ kubectl -n rwx-demo get pods -o wide
+NAME                      READY   STATUS    RESTARTS   AGE   IP          NODE                                       NOMINATED NODE   READINESS GATES
+writer-6fbffb985b-8kx9k   1/1     Running   0          42s   10.95.2.2   vks-cl02-vks-cl02-np-1-qb29j-z5xgj-nwfkj   <none>           <none>
+writer-6fbffb985b-z2547   1/1     Running   0          42s   10.95.1.2   vks-cl02-vks-cl02-np-1-qb29j-z5xgj-8sw7s   <none>           <none>
+
+$ kubectl -n rwx-demo exec writer-6fbffb985b-8kx9k -- tail -6 /data/shared.log     # 兩個 Pod（不同節點）寫同一個檔案
+error: pod, type/name or --filename must be specified
+12:13:17 writer-6fbffb985b-z2547 on vks-cl02-vks-cl02-np-1-qb29j-z5xgj-8sw7s
+12:13:19 writer-6fbffb985b-8kx9k on vks-cl02-vks-cl02-np-1-qb29j-z5xgj-nwfkj
+12:13:27 writer-6fbffb985b-z2547 on vks-cl02-vks-cl02-np-1-qb29j-z5xgj-8sw7s
+12:13:29 writer-6fbffb985b-8kx9k on vks-cl02-vks-cl02-np-1-qb29j-z5xgj-nwfkj
+12:13:37 writer-6fbffb985b-z2547 on vks-cl02-vks-cl02-np-1-qb29j-z5xgj-8sw7s
+12:13:39 writer-6fbffb985b-8kx9k on vks-cl02-vks-cl02-np-1-qb29j-z5xgj-nwfkj
+12:13:47 writer-6fbffb985b-z2547 on vks-cl02-vks-cl02-np-1-qb29j-z5xgj-8sw7s
+12:13:49 writer-6fbffb985b-8kx9k on vks-cl02-vks-cl02-np-1-qb29j-z5xgj-nwfkj

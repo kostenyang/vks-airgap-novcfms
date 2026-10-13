@@ -1,0 +1,7 @@
+# GET /policy/api/v1/infra/distributed-vlan-connections
+Distributed-vlan-connection-5 vlan 5 ['192.168.15.254/24']
+# GET .../vpc-connectivity-profiles/default
+external_ip_blocks ['/infra/ip-blocks/vks-block']
+service_gateway {'enable': True, 'edge_cluster_paths': ['/infra/sites/default/enforcement-points/default/virtual-network-appliance-clusters/vks-vna']}
+# GET /policy/api/v1/infra/ip-blocks/vks-block
+['192.168.15.0/24'] EXTERNAL [{'start': '192.168.15.240', 'end': '192.168.15.254'}]

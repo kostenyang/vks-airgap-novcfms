@@ -1,0 +1,26 @@
+$ kubectl apply -f rbac-csi-nfs.yaml -f csi-nfs-driverinfo.yaml -f csi-nfs-controller.yaml -f csi-nfs-node.yaml   # image 已改指 harbor01.home.lab/csi
+serviceaccount/csi-nfs-controller-sa created
+serviceaccount/csi-nfs-node-sa created
+clusterrole.rbac.authorization.k8s.io/nfs-external-provisioner-role created
+clusterrolebinding.rbac.authorization.k8s.io/nfs-csi-provisioner-binding created
+clusterrole.rbac.authorization.k8s.io/nfs-external-resizer-role created
+clusterrolebinding.rbac.authorization.k8s.io/nfs-csi-resizer-role created
+csidriver.storage.k8s.io/nfs.csi.k8s.io created
+deployment.apps/csi-nfs-controller created
+daemonset.apps/csi-nfs-node created
+
+$ kubectl -n kube-system get pods -l "app in (csi-nfs-controller,csi-nfs-node)" -o wide
+NAME                                           READY   STATUS    RESTARTS   AGE     IP              NODE                                       NOMINATED NODE   READINESS GATES
+csi-nfs-controller-64c96c5ccf-5c4gq            5/5     Running   0          44s     192.168.16.53   vks-cl02-vks-cl02-np-1-qb29j-z5xgj-8sw7s   <none>           <none>
+csi-nfs-node-fc6js                             3/3     Running   0          43s     192.168.16.53   vks-cl02-vks-cl02-np-1-qb29j-z5xgj-8sw7s   <none>           <none>
+csi-nfs-node-v7gpj                             3/3     Running   0          43s     192.168.16.52   vks-cl02-2lnqd-qsppm                       <none>           <none>
+
+$ kubectl get csidriver
+NAME                     ATTACHREQUIRED   PODINFOONMOUNT   STORAGECAPACITY   TOKENREQUESTS   REQUIRESREPUBLISH   MODES        AGE
+csi.vsphere.vmware.com   true             false            true              <unset>         false               Persistent   6m7s
+nfs.csi.k8s.io           false            false            false             <unset>         false               Persistent   44s
+
+$ kubectl -n kube-system get events | grep -i pulled | grep csi-nfs | head -3
+36s         Normal    Pulled                   pod/csi-nfs-controller-64c96c5ccf-5c4gq            Successfully pulled image "harbor01.home.lab/csi/csi-provisioner:v6.3.0" in 7.9s (7.9s including waiting). Image size: 102949876 bytes.
+27s         Normal    Pulled                   pod/csi-nfs-controller-64c96c5ccf-5c4gq            Successfully pulled image "harbor01.home.lab/csi/csi-resizer:v2.2.0" in 5.47s (8.595s including waiting). Image size: 96276958 bytes.
+19s         Normal    Pulled                   pod/csi-nfs-controller-64c96c5ccf-5c4gq            Successfully pulled image "harbor01.home.lab/csi/csi-snapshotter:v8.6.0" in 6.082s (7.717s including waiting). Image size: 97724938 bytes.

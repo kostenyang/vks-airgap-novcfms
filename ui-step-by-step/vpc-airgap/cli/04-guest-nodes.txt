@@ -1,0 +1,4 @@
+$ kubectl get nodes -o wide
+NAME                                       STATUS   ROLES           AGE     VERSION            INTERNAL-IP     EXTERNAL-IP   OS-IMAGE                 KERNEL-VERSION          CONTAINER-RUNTIME
+vks-cl01-j68j9-zb8m8                       Ready    control-plane   6m25s   v1.36.2+vmware.2   192.168.15.50   <none>        VMware Photon OS/Linux   6.1.176-4.ph5 (amd64)   containerd://2.3.2+vmware.3-fips
+vks-cl01-vks-cl01-np-1-b6mhh-96jdm-jfsnc   Ready    <none>          2m2s    v1.36.2+vmware.2   192.168.15.51   <none>        VMware Photon OS/Linux   6.1.176-4.ph5 (amd64)   containerd://2.3.2+vmware.3-fips

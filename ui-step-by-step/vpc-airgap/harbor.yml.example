@@ -1,0 +1,62 @@
+# Harbor v2.15.4 harbor.yml(air-gap lab 實際使用,已移除註解;密碼已遮蔽)
+# 只改了:hostname / https.certificate / https.private_key / harbor_admin_password / data_volume
+hostname: harbor01.home.lab
+http:
+  port: 80
+https:
+  port: 443
+  certificate: /data/cert/harbor01.home.lab.crt
+  private_key: /data/cert/harbor01.home.lab.key
+harbor_admin_password: <change-me>
+database:
+  password: <change-me>
+  max_idle_conns: 100
+  max_open_conns: 900
+  conn_max_lifetime: 5m
+  conn_max_idle_time: 0
+data_volume: /data/harbor
+trivy:
+  ignore_unfixed: false
+  skip_update: false
+  skip_java_db_update: false
+  db_repository: ghcr.io/aquasecurity/trivy-db
+  java_db_repository: ghcr.io/aquasecurity/trivy-java-db
+  offline_scan: false
+  security_check: vuln
+  insecure: false
+  timeout: 5m0s
+jobservice:
+  max_job_workers: 10
+  max_job_duration_hours: 24
+  job_loggers:
+    - STD_OUTPUT
+    - FILE
+  logger_sweeper_duration: 1 #days
+notification:
+  webhook_job_max_retry: 3
+  webhook_job_http_client_timeout: 3 #seconds
+log:
+  level: info
+  local:
+    rotate_count: 50
+    rotate_size: 200M
+    location: /var/log/harbor
+_version: 2.15.0
+proxy:
+  http_proxy:
+  https_proxy:
+  no_proxy:
+  components:
+    - core
+    - jobservice
+    - trivy
+network:
+  allow_private_network_access: true
+content_trust:
+  legacy_signer_pull_enabled: true
+upload_purging:
+  enabled: true
+  age: 168h
+  interval: 24h
+  dryrun: false
+cache:

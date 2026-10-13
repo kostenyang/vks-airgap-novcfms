@@ -1,0 +1,10 @@
+esxcli network diag ping -H 192.168.15.254 -I vmk3 -c 3
+
+Transmitted    : 3
+Received       : 3
+PacketLost     : 0
+RoundtripMinMS : 0
+RoundtripAvgMS : 0
+RoundtripMaxMS : 1
+
+

@@ -1,0 +1,8 @@
+> nslookup vcf-m05-vna01a.home.lab 10.0.0.200
+Name:    vcf-m05-vna01a.home.lab
+Address:  10.0.1.183
+
+> nslookup 10.0.1.183 10.0.0.200
+Name:    vcf-m05-vna01a.home.lab
+Address:  10.0.1.183
+
