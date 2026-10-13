@@ -45,7 +45,7 @@ spec:
       machineDeployments:
         - class: node-pool
           name: vks-cl02-np-1
-          replicas: 1
+          replicas: 2   # 精靈產生時是 1，為了驗證跨節點 RWX 改成 2
           metadata:
             annotations:
               run.tanzu.vmware.com/resolve-os-image: os-name=photon

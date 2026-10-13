@@ -294,6 +294,179 @@ NAS 上看連線來源（[`cli/25-nas-connections-vks.txt`](cli/25-nas-connectio
 
 ---
 
+## 用 YAML 建節點和 Pod
+
+前面的叢集是用 UI 精靈建的，精靈產生的就是下面這份 YAML，直接用 kubectl apply 也可以，結果相同。整個流程分兩層，**對象不同**：
+
+1. **建節點（VKS 叢集）**：在 **Supervisor** 的 namespace `vks-lab` 套用 `Cluster` YAML。VKS 依照 YAML 建出節點 VM，`secondary` 那段會讓每個節點自動多一張 eth1。
+2. **建 Pod**：登入 **guest cluster** `vks-cl02`，照一般方式套用 PVC + Pod。Pod 的 YAML 裡**不會出現 eth1**；NFS 由節點上的 CSI driver 掛載，節點的路由表自然從 eth1 出去。
+
+### 建節點：Cluster YAML（在 Supervisor 套用）
+
+[`vks-cl02.yaml`](vks-cl02.yaml)，重點欄位加了註解：
+
+```yaml
+apiVersion: cluster.x-k8s.io/v1beta2
+kind: Cluster
+metadata:
+  name: vks-cl02
+  namespace: vks-lab                       # vSphere Namespace
+spec:
+  clusterNetwork:
+    pods:     {cidrBlocks: ["10.95.0.0/16"]}
+    services: {cidrBlocks: ["10.96.0.0/12"]}
+    serviceDomain: cluster.local
+  topology:
+    classRef:
+      name: builtin-generic-v3.7.0
+      namespace: vmware-system-vks-public  # ClusterClass 在這個 namespace
+    version: v1.36.2---vmware.2-vkr.3      # KR（來自 vkr-local library）
+    variables:
+      - name: vmClass
+        value: best-effort-medium
+      - name: storageClass
+        value: vks-ftt0                    # 節點自己的磁碟仍放 vSAN
+      - name: networks
+        value:
+          interfaces:
+            primary:                       # eth0：VLAN 6，public SubnetSet
+              network: {name: public, kind: SubnetSet, apiVersion: crd.nsx.vmware.com/v1alpha1}
+            secondary:                     # eth1：VLAN 7，分享進來的 nas-vlan7 Subnet
+              - name: eth1
+                network: {name: nas-vlan7, kind: Subnet, apiVersion: crd.nsx.vmware.com/v1alpha1}
+    controlPlane:
+      replicas: 1
+      metadata:
+        annotations:
+          run.tanzu.vmware.com/resolve-os-image: os-name=photon
+    workers:
+      machineDeployments:
+        - class: node-pool
+          name: vks-cl02-np-1
+          replicas: 2                      # worker 數量
+          metadata:
+            annotations:
+              run.tanzu.vmware.com/resolve-os-image: os-name=photon
+          variables:
+            overrides:
+              - name: vmClass
+                value: best-effort-small
+```
+
+指令：
+
+```bash
+kubectl vsphere login --server=192.168.16.5 -u administrator@vsphere.local --insecure-skip-tls-verify
+kubectl config use-context vks-lab
+kubectl apply -f vks-cl02.yaml
+kubectl -n vks-lab get cluster,machines
+```
+
+注意：
+
+- 套用前 namespace 裡要已經有 Subnet `nas-vlan7`（步驟 2-1 到 2-4：NSX 建 + Namespace Networks 分享）；這個 Subnet 不能自己用 kubectl 建。
+- 每個節點都會有 eth1，IP 由 NSX 自動配，YAML 裡不用寫任何 IP。
+- 之後要加 worker，改 `replicas` 再 apply 一次；新節點一樣會有 eth1（這次加的第二台 worker 拿到 .66）。
+
+### 建 Pod：PVC + Pod（在 guest cluster 套用）
+
+先登入 guest cluster：
+
+```bash
+kubectl vsphere login --server=192.168.16.5 -u administrator@vsphere.local --insecure-skip-tls-verify \
+  --tanzu-kubernetes-cluster-namespace vks-lab --tanzu-kubernetes-cluster-name vks-cl02
+kubectl config use-context vks-cl02
+```
+
+**做法 1：RWO**（StorageClass `vks-nas` 由 storage policy 自動產生），[`pvc-nas-rwo.yaml`](pvc-nas-rwo.yaml)：
+
+```yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata: {name: data-on-nas, namespace: nas-demo}
+spec:
+  accessModes: ["ReadWriteOnce"]
+  storageClassName: vks-nas           # = 加到 namespace 的 vks-nas storage policy
+  resources: {requests: {storage: 2Gi}}
+---
+apiVersion: v1
+kind: Pod
+metadata: {name: writer, namespace: nas-demo}
+spec:
+  securityContext:                    # VKS 預設 PSA restricted
+    runAsNonRoot: true
+    runAsUser: 1000
+    fsGroup: 1000                     # 讓非 root 能寫這個 volume
+    seccompProfile: {type: RuntimeDefault}
+  containers:
+  - name: c
+    image: harbor01.home.lab/vks-apps/busybox:1.37.0
+    command: ["sh", "-c", "echo hello >> /data/hello.txt; sleep 3600"]
+    volumeMounts: [{name: data, mountPath: /data}]
+    securityContext: {allowPrivilegeEscalation: false, capabilities: {drop: ["ALL"]}}
+  volumes:
+  - name: data
+    persistentVolumeClaim: {claimName: data-on-nas}
+```
+
+**做法 2：RWX**（要先裝好 csi-driver-nfs，步驟 2-6），[`nfs-csi/storageclass-nas-nfs-rwx.yaml`](nfs-csi/storageclass-nas-nfs-rwx.yaml) + [`nfs-csi/rwx-demo.yaml`](nfs-csi/rwx-demo.yaml)：
+
+```yaml
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata: {name: nas-nfs-rwx}
+provisioner: nfs.csi.k8s.io
+parameters:
+  server: 192.168.17.20               # NAS，節點從 eth1（VLAN 7）直接到
+  share: /export/vks-rwx
+  mountPermissions: "0777"            # 讓非 root 的 Pod 能寫
+mountOptions: ["nfsvers=4.1"]
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata: {name: shared-data, namespace: rwx-demo}
+spec:
+  accessModes: ["ReadWriteMany"]
+  storageClassName: nas-nfs-rwx
+  resources: {requests: {storage: 5Gi}}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata: {name: writer, namespace: rwx-demo}
+spec:
+  replicas: 2
+  selector: {matchLabels: {app: writer}}
+  template:
+    metadata: {labels: {app: writer}}
+    spec:
+      topologySpreadConstraints:      # 兩個 Pod 盡量分到不同節點
+      - {maxSkew: 1, topologyKey: kubernetes.io/hostname, whenUnsatisfiable: ScheduleAnyway, labelSelector: {matchLabels: {app: writer}}}
+      securityContext: {runAsNonRoot: true, runAsUser: 1000, seccompProfile: {type: RuntimeDefault}}
+      containers:
+      - name: c
+        image: harbor01.home.lab/vks-apps/busybox:1.37.0
+        command: ["sh", "-c", "while true; do echo \"$(date) $HOSTNAME\" >> /data/shared.log; sleep 10; done"]
+        volumeMounts: [{name: data, mountPath: /data}]
+        securityContext: {allowPrivilegeEscalation: false, capabilities: {drop: ["ALL"]}}
+      volumes:
+      - name: data
+        persistentVolumeClaim: {claimName: shared-data}
+```
+
+（repo 裡的檔案還包含 `nas-demo`、`rwx-demo` 兩個 Namespace。）
+
+```bash
+kubectl apply -f pvc-nas-rwo.yaml
+kubectl apply -f nfs-csi/storageclass-nas-nfs-rwx.yaml -f nfs-csi/rwx-demo.yaml
+kubectl -n rwx-demo get pvc,pods -o wide
+```
+
+### 為什麼 Pod 不用指定 eth1
+
+NFS 是**節點**上的 CSI node plugin（hostNetwork）掛的，不是 Pod 自己連。節點的路由表把 192.168.17.0/24 直接指向 eth1（`ip route get 192.168.17.20` → `dev eth1`），所以 NAS 流量自動走 VLAN 7；Pod 自己的流量仍然走 eth0 / Antrea 的 Pod 網路。只有當應用程式要在 Pod 裡**直接**連 VLAN 7（不是透過 PV），才需要另外設定 Antrea secondary network。
+
+---
+
 ## 遇到的問題
 
 | # | 症狀 | 原因 / 處理 |
