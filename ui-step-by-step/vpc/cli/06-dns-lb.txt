@@ -1,0 +1,13 @@
+$ kubectl apply -f dns-lb.yaml
+
+$ kubectl -n kube-system get svc coredns-lb-demo
+NAME              TYPE           CLUSTER-IP       EXTERNAL-IP     PORT(S)        AGE
+coredns-lb-demo   LoadBalancer   10.109.137.171   192.168.15.33   53:30827/TCP   24s
+
+$ nslookup -vc kubernetes.default.svc.cluster.local 192.168.15.33   # 從管理網段 10.0.0.200 執行
+Server:  UnKnown
+Address:  192.168.15.33
+
+Name:    kubernetes.default.svc.cluster.local
+Address:  10.96.0.1
+

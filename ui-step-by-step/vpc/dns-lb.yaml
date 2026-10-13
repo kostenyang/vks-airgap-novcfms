@@ -1,0 +1,14 @@
+# 示範(air-gap 也能做):LoadBalancer Service → 後端用叢集內建 CoreDNS(映像已在節點上,不用拉)
+#   VNA 從 vks-block(192.168.15.0/24)配 VIP;從管理網段用 nslookup 打 VIP 驗證
+#   參考 github.com/notchcc/vcf-lab vks/manifests/service-static-ip-example.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: coredns-lb-demo
+  namespace: kube-system
+spec:
+  type: LoadBalancer
+  selector:
+    k8s-app: kube-dns
+  ports:
+  - {name: dns-tcp, port: 53, targetPort: 53, protocol: TCP}

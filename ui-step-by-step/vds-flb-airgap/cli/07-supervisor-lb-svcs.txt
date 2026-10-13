@@ -1,0 +1,6 @@
+$ kubectl get svc -A (Supervisor, LoadBalancer)
+NAMESPACE                                   NAME                                                             TYPE           CLUSTER-IP    EXTERNAL-IP     PORT(S)                        AGE
+kube-system                                 kube-apiserver-lb-svc                                            LoadBalancer   10.96.0.201   192.168.15.64   443:31899/TCP,6443:32304/TCP   36m
+kube-system                                 mgmt-image-proxy                                                 LoadBalancer   10.96.0.231   192.168.15.65   443:30923/TCP                  30m
+vks-lab                                     vks-cl01                                                         LoadBalancer   10.96.1.206   192.168.15.66   6443/TCP                       11m
+vks-lab                                     vks-cl01-3bd040682e5db35d8d26e                                   LoadBalancer   10.96.1.28    192.168.15.67   80/TCP                         73s

@@ -1,0 +1,52 @@
+# VKS 叢集 vks-cl01 — vSphere Client（Namespace → Resources → Kubernetes → CREATE CLUSTER → Custom Configuration）精靈產生的 YAML
+# 重點：variables.networks → SubnetSet public（VLAN-backed VPC 沒有 private subnet）；worker 用 overrides 改 VM class
+# 若 apply 時出現 'variables[networks] ... variable is not defined'，等 ClusterClass 的 status.variables 出現 networks 再送（見 README 步驟 6）
+apiVersion: cluster.x-k8s.io/v1beta2
+kind: Cluster
+metadata:
+  name: vks-cl01
+  namespace: vks-lab
+spec:
+  clusterNetwork:
+    pods:
+      cidrBlocks:
+        - 10.95.0.0/16
+    services:
+      cidrBlocks:
+        - 10.96.0.0/12
+    serviceDomain: cluster.local
+  topology:
+    classRef:
+      name: builtin-generic-v3.7.0
+      namespace: vmware-system-vks-public
+    version: v1.36.2---vmware.2-vkr.3
+    variables:
+      - name: vmClass
+        value: best-effort-medium
+      - name: storageClass
+        value: vks-ftt0
+      - name: networks
+        value:
+          interfaces:
+            primary:
+              network:
+                name: public
+                kind: SubnetSet
+                apiVersion: crd.nsx.vmware.com/v1alpha1
+    controlPlane:
+      replicas: 1
+      metadata:
+        annotations:
+          run.tanzu.vmware.com/resolve-os-image: os-name=photon
+    workers:
+      machineDeployments:
+        - class: node-pool
+          name: vks-cl01-np-1
+          replicas: 1
+          metadata:
+            annotations:
+              run.tanzu.vmware.com/resolve-os-image: os-name=photon
+          variables:
+            overrides:
+              - name: vmClass
+                value: best-effort-small

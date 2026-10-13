@@ -1,0 +1,22 @@
+$ mkdir -p /root/staging/images
+
+$ cd /root/staging/images && sha256sum -c SHA256SUMS
+busybox-1.37.0.tar: OK
+nginx-unprivileged-1.30.4-alpine.tar: OK
+
+$ docker load -i /root/staging/images/nginx-unprivileged-1.30.4-alpine.tar && docker load -i /root/staging/images/busybox-1.37.0.tar
+Loaded image: nginxinc/nginx-unprivileged:1.30.4-alpine
+Loaded image: busybox:1.37.0
+
+$ echo '<harbor-admin-password>' | docker login harbor01.home.lab -u admin --password-stdin 2>&1 | grep -v WARNING
+
+Configure a credential helper to remove this warning. See
+https://docs.docker.com/go/credential-store/
+
+Login Succeeded
+
+$ docker tag nginxinc/nginx-unprivileged:1.30.4-alpine harbor01.home.lab/vks-apps/nginx-unprivileged:1.30.4-alpine && docker tag busybox:1.37.0 harbor01.home.lab/vks-apps/busybox:1.37.0
+
+$ docker push -q harbor01.home.lab/vks-apps/nginx-unprivileged:1.30.4-alpine && docker push -q harbor01.home.lab/vks-apps/busybox:1.37.0
+harbor01.home.lab/vks-apps/nginx-unprivileged:1.30.4-alpine
+harbor01.home.lab/vks-apps/busybox:1.37.0

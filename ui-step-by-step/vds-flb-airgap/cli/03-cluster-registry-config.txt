@@ -1,0 +1,3 @@
+$ kubectl get clusterregistryconfigs
+NAME                               SERVER
+image-registry-0e1aec58e7a5e56a5   harbor01.home.lab

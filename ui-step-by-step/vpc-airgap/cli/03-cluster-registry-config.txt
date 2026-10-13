@@ -1,0 +1,12 @@
+$ kubectl get clusterregistryconfigs
+NAME                               SERVER
+image-registry-53b66658d5e706921   harbor01.home.lab
+
+$ kubectl get clusterregistryconfigs -o yaml (spec，CA 內容省略)
+{
+ "name": "image-registry-53b66658d5e706921",
+ "spec": {
+  "caCerts": "<PEM omitted>",
+  "server": "harbor01.home.lab"
+ }
+}

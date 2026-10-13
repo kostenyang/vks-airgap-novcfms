@@ -1,0 +1,5 @@
+# RouterOS(VLAN 5 閘道)以 VLAN 5 的位址當來源 ping 8.8.8.8 → 出不去(上游沒有替 192.168.15.0/24 做 NAT)
+> /ping address=8.8.8.8 count=3 src-address=192.168.15.254
+=seq=0 =host=8.8.8.8 =status=timeout =sent=1 =received=0 =packet-loss=100
+=seq=1 =host=8.8.8.8 =status=timeout =sent=2 =received=0 =packet-loss=100
+=seq=2 =host=8.8.8.8 =status=timeout =sent=3 =received=0 =packet-loss=100
