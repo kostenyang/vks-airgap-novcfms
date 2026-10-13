@@ -1,0 +1,7 @@
+$ kubectl get nodes -o wide
+NAME                                       STATUS   ROLES           AGE     VERSION            INTERNAL-IP     EXTERNAL-IP   OS-IMAGE                 KERNEL-VERSION          CONTAINER-RUNTIME
+vks-cl01-gdrht-wt7kp                       Ready    control-plane   3m15s   v1.36.2+vmware.2   192.168.16.50   <none>        VMware Photon OS/Linux   6.1.176-4.ph5 (amd64)   containerd://2.3.2+vmware.3-fips
+vks-cl01-vks-cl01-np-1-8vlfh-gkvlr-plzc8   Ready    <none>          92s     v1.36.2+vmware.2   192.168.16.51   <none>        VMware Photon OS/Linux   6.1.176-4.ph5 (amd64)   containerd://2.3.2+vmware.3-fips
+
+$ kubectl get pods -A | grep -v Running | grep -v Completed
+NAMESPACE                      NAME                                            READY   STATUS    RESTARTS      AGE

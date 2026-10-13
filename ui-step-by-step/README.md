@@ -1,4 +1,4 @@
-# VKS UI Step by Step（m05，vSphere Client UI 版）
+# VKS UI Step by Step（m05 / m06，vSphere Client UI 版）
 
 在另一套 nested lab（m05，`home.lab`，VCF 9.1.1，用 VCF Installer「Deploy a new VCF Instance」部署）把 VKS 從頭做了四次：VPC / 非 VPC 各一次，每種再做一次 air-gap。
 **vSphere 的操作全部用 UI 並逐步截圖**（Supervisor 精靈、Content Library、Namespace、Container Registries、VKS 叢集精靈），CLI 只用在驗證。每份都附 Word 版（docx）。
@@ -7,6 +7,10 @@
 |---|---|---|
 | **VPC**：VCF Networking with VPC（VLAN-backed VPC，NSX + VNA） | [`vpc/`](vpc/README.md)（[docx](vpc/VKS-VLAN-backed-VPC-UI-Step-by-Step.docx)） | [`vpc-airgap/`](vpc-airgap/README.md)（[docx](vpc-airgap/VKS-VLAN-backed-VPC-Airgap-UI-Step-by-Step.docx)） |
 | **非 VPC**：VDS + Foundation Load Balancer | [`vds-flb/`](vds-flb/README.md)（[docx](vds-flb/VKS-VDS-FLB-UI-Step-by-Step.docx)） | [`vds-flb-airgap/`](vds-flb-airgap/README.md)（[docx](vds-flb-airgap/VKS-VDS-FLB-Airgap-UI-Step-by-Step.docx)） |
+
+### ⭐ VPC air-gap + 不部署 VCFMS（m06）
+
+[`vpc-airgap-novcfms/`](vpc-airgap-novcfms/README.md)（[docx](vpc-airgap-novcfms/VKS-VPC-Airgap-NoVCFMS-UI-Step-by-Step.docx)）：另一套 nested lab **m06**，從 **VCF Installer UI 精靈**開始 bring-up，在 VCF Management Platform（VSP）開始時中止，所以**沒有 VCFMS、VCF Operations**；再用 VLAN-backed VPC 啟用 Supervisor、建 VKS 叢集，air-gap 從內部 Harbor 部署應用。結論：**VPC Supervisor + VKS 不依賴 VCFMS**。
 
 ## 四份的差異
 
@@ -23,9 +27,9 @@
 
 | 項目 | 主文件（[docs/](../docs)） | UI step-by-step（m05） |
 |---|---|---|
-| 環境 | alan.lab，bring-up 中止、不部署 VCFMS | home.lab，**m05 有部署 VCFMS**（`vcf-m05-vsp01`），不是 no-VCFMS 環境；文件裡的 VKS 步驟沒有用到 VCFMS |
+| 環境 | alan.lab，bring-up 中止、不部署 VCFMS | m05：home.lab，**有部署 VCFMS**（`vcf-m05-vsp01`）；m06（`vpc-airgap-novcfms`）：**不部署 VCFMS**，bring-up 從 Installer UI 精靈開始、在 VSP 開始時中止 |
 | 操作方式 | 程序 + 腳本 | vSphere Client UI，逐步截圖 |
-| Supervisor | VDS + FLB | VPC 和 VDS + FLB 兩種 |
+| Supervisor | VDS + FLB | VPC 和 VDS + FLB 兩種（m06 為 VPC） |
 | VKS 信任 Harbor CA | `osConfiguration.trust`（叢集 YAML） | Supervisor 的 **Container Registries**（UI，產生 `ClusterRegistryConfig`，叢集 YAML 不用改） |
 | VKr | content library | Local Content Library → **Import item** 匯入本機 `.ovf/.vmdk/.mf/.cert`，KR 自動產生 |
 | air-gap 範圍 | DNS 層級 | workload VLAN 本身沒有對外路由，Harbor VM 用 iptables 擋對外；管理網段沒擋 |

@@ -1,0 +1,3 @@
+$ kubectl -n vks-lab get subnetsets
+NAME     ACCESSMODE   IPV4SUBNETSIZE   NETWORKADDRESSES
+public   Public       16               
