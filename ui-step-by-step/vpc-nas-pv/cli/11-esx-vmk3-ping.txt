@@ -1,0 +1,3 @@
+vcf-m06-esx01.home.lab: esxcli network diag ping -H 192.168.17.20 -I vmk3 -c 3  → Transmitted 3 / Received 3 / PacketLost 0%
+vcf-m06-esx02.home.lab: esxcli network diag ping -H 192.168.17.20 -I vmk3 -c 3  → Transmitted 3 / Received 3 / PacketLost 0%
+vcf-m06-esx03.home.lab: esxcli network diag ping -H 192.168.17.20 -I vmk3 -c 3  → Transmitted 3 / Received 3 / PacketLost 0%

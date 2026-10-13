@@ -12,6 +12,15 @@
 
 [`vpc-airgap-novcfms/`](vpc-airgap-novcfms/README.md)（[docx](vpc-airgap-novcfms/VKS-VPC-Airgap-NoVCFMS-UI-Step-by-Step.docx)）：另一套 nested lab **m06**，從 **VCF Installer UI 精靈**開始 bring-up，在 VCF Management Platform（VSP）開始時中止，所以**沒有 VCFMS、VCF Operations**；再用 VLAN-backed VPC 啟用 Supervisor、建 VKS 叢集，air-gap 從內部 Harbor 部署應用。結論：**VPC Supervisor + VKS 不依賴 VCFMS**。
 
+### ⭐ 外掛 NAS（NFS）做 PV，走獨立 VLAN（m06）
+
+[`vpc-nas-pv/`](vpc-nas-pv/README.md)（[docx](vpc-nas-pv/VKS-VPC-NAS-PV-Step-by-Step.docx)）：同一套 m06（VPC、air-gap、無 VCFMS），NAS 放在獨立的 VLAN 7，不經過 VKS 的 public subnet。兩種做法都驗證過：
+
+| 做法 | PV | NAS 流量 | 重點 |
+|---|---|---|---|
+| 1. ESXi 掛 NFS datastore → vSphere CSI | RWO（NAS 上的 VMDK） | ESXi vmk3（VLAN 7，Vmknic binding） | tag-based storage policy `vks-nas` 加到 namespace，VKS 自動有 StorageClass |
+| 2. VKS 節點加 eth1 → NFS CSI driver | **RWX** | VKS 節點 eth1（VLAN 7） | NSX Distributed VLAN Connection（Dedicated to Subnet）+ VLAN 延伸 Subnet（API 開 static IP）→ Namespace Networks 分享 → 叢集精靈 ADD ADDITIONAL NETWORK |
+
 ## 四份的差異
 
 | | VPC | VPC air-gap | VDS + FLB | VDS + FLB air-gap |

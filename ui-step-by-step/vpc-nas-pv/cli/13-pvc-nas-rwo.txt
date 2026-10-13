@@ -1,0 +1,15 @@
+$ kubectl -n nas-demo get pvc,pod
+NAME                                STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   VOLUMEATTRIBUTESCLASS   AGE
+persistentvolumeclaim/data-on-nas   Bound    pvc-cddec61c-f4e3-424c-b6eb-aaebb99e1f94   2Gi        RWO            vks-nas        <unset>                 11s
+
+NAME         READY   STATUS    RESTARTS   AGE
+pod/writer   1/1     Running   0          11s
+
+$ kubectl get pv -o custom-columns=NAME:.metadata.name,CLAIM:.spec.claimRef.name,SC:.spec.storageClassName,VOLUMEHANDLE:.spec.csi.volumeHandle
+NAME                                       CLAIM         SC        VOLUMEHANDLE
+pvc-cddec61c-f4e3-424c-b6eb-aaebb99e1f94   data-on-nas   vks-nas   eb8e3393-8920-4052-8c46-6f3d34e3a561-cddec61c-f4e3-424c-b6eb-aaebb99e1f94
+
+$ kubectl -n nas-demo logs writer
+Filesystem                Size      Used Available Use% Mounted on
+/dev/sdb                  1.9G    540.0K      1.8G   0% /data
+hello from NAS PV Tue Oct 13 11:01:58 UTC 2026

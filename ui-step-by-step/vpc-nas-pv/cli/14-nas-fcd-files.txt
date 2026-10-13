@@ -1,0 +1,7 @@
+$ sudo find /export/vks-ds -maxdepth 3 -name '*.vmdk' -ls    # 在 NAS 上：PV 就是 fcd/ 下的 VMDK
+2026-10-13 10:56  2147483648  /export/vks-ds/fcd/769957c0a40a4f8ab8428a084178af62-flat.vmdk
+2026-10-13 10:56         845  /export/vks-ds/fcd/769957c0a40a4f8ab8428a084178af62.vmdk
+
+$ sudo du -sh /export/vks-ds/fcd 2>/dev/null
+98M	/export/vks-ds/fcd
+

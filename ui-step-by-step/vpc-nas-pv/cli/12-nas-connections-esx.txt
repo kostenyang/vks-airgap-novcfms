@@ -1,0 +1,5 @@
+$ ss -tn state established '( sport = :2049 )'     # 在 NAS 上看誰連進來
+Recv-Q Send-Q Local Address:Port  Peer Address:PortProcess
+0      0      192.168.17.20:2049 192.168.17.22:906        
+0      0      192.168.17.20:2049 192.168.17.21:722        
+0      0      192.168.17.20:2049 192.168.17.23:798

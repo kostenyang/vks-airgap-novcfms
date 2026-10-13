@@ -1,0 +1,18 @@
+$ ss -tn state established '( sport = :2049 )'     # 在 NAS 上看誰連進來
+Recv-Q Send-Q Local Address:Port  Peer Address:PortProcess
+0      0      192.168.17.20:2049 192.168.17.22:906        
+0      0      192.168.17.20:2049 192.168.17.65:982        
+0      0      192.168.17.20:2049 192.168.17.21:722        
+0      0      192.168.17.20:2049 192.168.17.23:798        
+0      0      192.168.17.20:2049 192.168.17.66:860
+#  192.168.17.21-23 = ESXi vmk3（做法 1 的 NFS datastore）
+#  192.168.17.65/.66 = VKS worker 的 eth1（做法 2，NFS CSI 直接掛）—— 沒有任何 192.168.16.x（public subnet）
+
+$ ls -la /export/vks-rwx/ ; tail -3 /export/vks-rwx/pvc-*/shared.log
+total 12
+drwxrwxrwx 3 root root 4096 Oct 13 12:07 .
+drwxr-xr-x 4 root root 4096 Oct 13 10:39 ..
+drwxrwxrwx 2 root root 4096 Oct 13 12:07 pvc-104bfa32-9d48-4a98-84a4-f67ae6894f45
+12:13:59 writer-6fbffb985b-8kx9k on vks-cl02-vks-cl02-np-1-qb29j-z5xgj-nwfkj
+12:14:07 writer-6fbffb985b-z2547 on vks-cl02-vks-cl02-np-1-qb29j-z5xgj-8sw7s
+12:14:09 writer-6fbffb985b-8kx9k on vks-cl02-vks-cl02-np-1-qb29j-z5xgj-nwfkj

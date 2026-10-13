@@ -1,0 +1,21 @@
+# Supervisor（vks-lab）：VKS 節點的 eth1 接 nas-vlan7 Subnet，IP 由 NSX static allocation 配（.1-.63 已排除）
+$ kubectl -n vks-lab get subnetports | grep vks-cl02
+NAME                                                      SUBNET      SUBNETSET   IP
+vks-cl02-2lnqd-qsppm-nas-vlan7-eth1                       nas-vlan7   <none>      192.168.17.64/24
+vks-cl02-2lnqd-qsppm-public-eth0                          <none>      public      192.168.16.52/28
+vks-cl02-vks-cl02-np-1-qb29j-z5xgj-8sw7s-nas-vlan7-eth1   nas-vlan7   <none>      192.168.17.65/24
+vks-cl02-vks-cl02-np-1-qb29j-z5xgj-8sw7s-public-eth0      <none>      public      192.168.16.53/28
+
+$ kubectl -n vks-lab get vm <vks-cl02 節點> -o jsonpath="{.status.network.interfaces}"
+== vks-cl02-2lnqd-qsppm
+  eth0  192.168.16.52
+  eth1  192.168.17.64
+== vks-cl02-vks-cl02-np-1-qb29j-z5xgj-8sw7s
+  eth0  192.168.16.53
+  eth1  192.168.17.65
+
+# guest cluster vks-cl02
+$ kubectl get nodes -o wide
+NAME                                       STATUS   ROLES           AGE     VERSION            INTERNAL-IP     EXTERNAL-IP   OS-IMAGE                 KERNEL-VERSION          CONTAINER-RUNTIME
+vks-cl02-2lnqd-qsppm                       Ready    control-plane   4m44s   v1.36.2+vmware.2   192.168.16.52   <none>        VMware Photon OS/Linux   6.1.176-4.ph5 (amd64)   containerd://2.3.2+vmware.3-fips
+vks-cl02-vks-cl02-np-1-qb29j-z5xgj-8sw7s   Ready    <none>          101s    v1.36.2+vmware.2   192.168.16.53   <none>        VMware Photon OS/Linux   6.1.176-4.ph5 (amd64)   containerd://2.3.2+vmware.3-fips
