@@ -13,7 +13,7 @@ Supervisor 採 **VDS + Foundation Load Balancer**，registry 用**外部 Harbor�
 | [VKS-AirGap-VCF911-NoVCFMS.pptx](docs/VKS-AirGap-VCF911-NoVCFMS.pptx) | 技術簡報（25 頁，含中文講者備註） |
 | [docs/work/diagrams/](docs/work/diagrams) | 架構圖 d1–d4（PNG / SVG） |
 
-### UI step-by-step（另一套 lab m05，全部 vSphere Client UI 截圖）
+### UI step-by-step（另一套 lab m05，**有部署 VCFMS**，全部 vSphere Client UI 截圖）
 
 | Supervisor 網路 | 一般 | air-gap |
 |---|---|---|

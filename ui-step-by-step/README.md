@@ -23,7 +23,7 @@
 
 | 項目 | 主文件（[docs/](../docs)） | UI step-by-step（m05） |
 |---|---|---|
-| 環境 | alan.lab，bring-up 中止、不部署 VCFMS | home.lab，m05 所屬 fleet 有 VCFMS；VKS 的步驟本身不依賴 VCFMS |
+| 環境 | alan.lab，bring-up 中止、不部署 VCFMS | home.lab，**m05 有部署 VCFMS**（`vcf-m05-vsp01`），不是 no-VCFMS 環境；文件裡的 VKS 步驟沒有用到 VCFMS |
 | 操作方式 | 程序 + 腳本 | vSphere Client UI，逐步截圖 |
 | Supervisor | VDS + FLB | VPC 和 VDS + FLB 兩種 |
 | VKS 信任 Harbor CA | `osConfiguration.trust`（叢集 YAML） | Supervisor 的 **Container Registries**（UI，產生 `ClusterRegistryConfig`，叢集 YAML 不用改） |
